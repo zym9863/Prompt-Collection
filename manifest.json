@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt收藏夹",
+  "version": "1.0",
+  "description": "一个用于管理和收藏AI Prompt的浏览器插件",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "web_accessible_resources": [{
+    "resources": ["image_fx.jpg"],
+    "matches": ["<all_urls>"]
+  }],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "image_fx.jpg",
+      "32": "image_fx.jpg",
+      "48": "image_fx.jpg",
+      "128": "image_fx.jpg"
+    }
+  },
+  "icons": {
+    "16": "image_fx.jpg",
+    "32": "image_fx.jpg",
+    "48": "image_fx.jpg",
+    "128": "image_fx.jpg"
+  }
+}

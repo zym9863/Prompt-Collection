@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt收藏夹</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">
+      <img src="image_fx.jpg" alt="logo" class="logo">
+      Prompt收藏夹
+    </h1>
+    
+    <div class="search-bar">
+      <img src="icons/search.svg" alt="search" class="search-icon">
+      <input type="text" id="searchInput" placeholder="搜索Prompt...">
+    </div>
+
+    <div class="prompt-form">
+      <input type="text" id="titleInput" placeholder="标题">
+      <textarea id="promptInput" placeholder="Prompt内容..."></textarea>
+      <button id="addPromptBtn" class="primary-btn">
+        <img src="icons/add.svg" alt="add" class="btn-icon">
+        添加Prompt
+      </button>
+    </div>
+
+    <div class="import-export">
+      <button id="exportBtn" class="secondary-btn">
+        <img src="icons/export.svg" alt="export" class="btn-icon">
+        导出
+      </button>
+      <button id="importBtn" class="secondary-btn">
+        <img src="icons/import.svg" alt="import" class="btn-icon">
+        导入
+      </button>
+    </div>
+
+    <div id="promptList" class="prompt-list">
+      <!-- Prompts will be dynamically added here -->
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
