@@ -235,6 +235,7 @@ body {
   box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: move;
 }
 
 .prompt-item:hover {
@@ -311,4 +312,62 @@ body {
 
 .prompt-item.new {
   animation: addPrompt 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 拖拽相关样式 */
+.prompt-item.dragging {
+  opacity: 0.5;
+  transform: rotate(3deg);
+  z-index: 1000;
+  cursor: grabbing;
+}
+
+.prompt-item.drag-over {
+  transform: translateY(-3px) scale(1.02);
+  border: 2px solid rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.drag-placeholder {
+  height: 2px;
+  background: var(--gradient-primary);
+  margin: 8px 0;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.drag-placeholder.active {
+  opacity: 1;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.drag-handle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  cursor: grab;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23666" viewBox="0 0 24 24"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>') no-repeat center;
+  background-size: contain;
+}
+
+.prompt-item:hover .drag-handle {
+  opacity: 0.7;
+}
+
+.prompt-item {
+  position: relative;
 }

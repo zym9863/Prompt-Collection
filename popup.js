@@ -98,7 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     promptList.innerHTML = filteredPrompts.map(prompt => `
-      <div class="prompt-item" data-id="${prompt.id}">
+      <div class="prompt-item" data-id="${prompt.id}" draggable="true">
+        <div class="drag-handle"></div>
         <h3>${escapeHtml(prompt.title)}</h3>
         <p>${escapeHtml(prompt.content)}</p>
         <div class="prompt-actions">
@@ -108,6 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+    
+    // 为新渲染的元素添加拖拽事件监听器
+    addDragListeners();
   }
 
   // 使用事件委托处理prompt操作
@@ -152,5 +156,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  // 拖拽相关变量
+  let draggedItem = null;
+  let draggedIndex = -1;
+
+  // 添加拖拽事件监听器
+  function addDragListeners() {
+    const promptItems = promptList.querySelectorAll('.prompt-item');
+    
+    promptItems.forEach((item, index) => {
+      // 拖拽开始
+      item.addEventListener('dragstart', (e) => {
+        draggedItem = item;
+        draggedIndex = Array.from(promptItems).indexOf(item);
+        item.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', item.outerHTML);
+      });
+
+      // 拖拽结束
+      item.addEventListener('dragend', (e) => {
+        item.classList.remove('dragging');
+        draggedItem = null;
+        draggedIndex = -1;
+        
+        // 清除所有拖拽样式
+        promptItems.forEach(p => {
+          p.classList.remove('drag-over');
+        });
+      });
+
+      // 拖拽进入
+      item.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        if (item !== draggedItem) {
+          item.classList.add('drag-over');
+        }
+      });
+
+      // 拖拽悬停
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      });
+
+      // 拖拽离开
+      item.addEventListener('dragleave', (e) => {
+        // 只有当真正离开元素时才移除样式
+        if (!item.contains(e.relatedTarget)) {
+          item.classList.remove('drag-over');
+        }
+      });
+
+      // 放置
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        item.classList.remove('drag-over');
+        
+        if (draggedItem && item !== draggedItem) {
+          const currentIndex = Array.from(promptItems).indexOf(item);
+          reorderPrompts(draggedIndex, currentIndex);
+        }
+      });
+    });
+  }
+
+  // 重新排序prompts数组
+  function reorderPrompts(fromIndex, toIndex) {
+    // 获取当前显示的prompts（考虑搜索过滤）
+    const searchTerm = searchInput.value.toLowerCase();
+    const filteredPrompts = prompts.filter(prompt =>
+      prompt.title.toLowerCase().includes(searchTerm) ||
+      prompt.content.toLowerCase().includes(searchTerm)
+    );
+
+    // 如果有搜索过滤，需要找到在原数组中的真实索引
+    if (searchTerm) {
+      const movedPrompt = filteredPrompts[fromIndex];
+      const targetPrompt = filteredPrompts[toIndex];
+      
+      const realFromIndex = prompts.findIndex(p => p.id === movedPrompt.id);
+      const realToIndex = prompts.findIndex(p => p.id === targetPrompt.id);
+      
+      // 移动元素
+      const [removed] = prompts.splice(realFromIndex, 1);
+      prompts.splice(realToIndex, 0, removed);
+    } else {
+      // 没有搜索过滤时直接操作
+      const [removed] = prompts.splice(fromIndex, 1);
+      prompts.splice(toIndex, 0, removed);
+    }
+
+    // 保存到存储并重新渲染
+    savePrompts();
+    renderPromptList();
   }
 });
